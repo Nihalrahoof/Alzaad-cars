@@ -1,7 +1,7 @@
 /* Only public settings belong here. Never put passwords or API secrets in this file. */
 window.ALZAAD = Object.freeze({
-  demoMode: true, // Set false AFTER connecting and testing Google Apps Script.
-  apiUrl: "", // https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
+  demoMode: false, // Set false AFTER connecting and testing Google Apps Script.
+  apiUrl: "https://script.google.com/macros/s/AKfycbx6V4D9nfJ0_oI-CAJcejie0kWQlkor8CBlQdLpuF9BzXXw-HgqW2215Z3af3DOjITQ0w/exec", // https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
   refreshSeconds: 120,
   turnstileSiteKey: "", // Optional public site key; secret belongs in Apps Script Properties.
   phone: "+971 50 792 4012",
