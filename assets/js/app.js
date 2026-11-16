@@ -140,7 +140,9 @@
       const make = filters.elements.make?.value;
       const source =
         key === "model" && make ? cars.filter((c) => c.make === make) : cars;
-      setOptions(select, [...new Set(source.map((c) => c[key]))].sort());
+      const values = [...new Set(source.map((c) => c[key]))];
+      values.sort(key === "year" ? (a, b) => Number(b) - Number(a) : undefined);
+      setOptions(select, values);
     });
   }
   function syncForm() {
@@ -172,6 +174,7 @@
         ].every((key) => !f[key] || c[key] === f[key]) &&
         (!f.maxPrice ||
           (Number(c.price) > 0 && Number(c.price) <= Number(f.maxPrice))) &&
+        (!f.year || Number(c.year) === Number(f.year)) &&
         (!f.minYear || Number(c.year) >= Number(f.minYear)) &&
         (!f.maxMileage || Number(c.mileage) <= Number(f.maxMileage)),
     );
