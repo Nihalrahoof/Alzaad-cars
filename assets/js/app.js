@@ -23,10 +23,25 @@
   const wa = (message) =>
     `https://wa.me/${cfg.whatsapp}?text=${encodeURIComponent(message || "Hello Al Zaad Cars, I would like to know more about your available cars.")}`;
   const carLink = (c) => `car.html?id=${encodeURIComponent(c.id)}`;
+  const normalizeGoogleDriveUrl = (raw) => {
+    if (!raw || typeof raw !== "string") return "";
+    const trimmed = raw.trim();
+    if (trimmed === "CellImage" || trimmed.toLowerCase().includes("cellimage")) {
+      return "";
+    }
+    const driveMatch = trimmed.match(
+      /(?:drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:export=view&)?id=)|lh3\.google(?:usercontent)?\.com\/(?:u\/\d+\/)?d\/)([a-zA-Z0-9_-]{25,})/,
+    );
+    if (driveMatch && driveMatch[1]) {
+      return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+    }
+    return trimmed;
+  };
   const safeImage = (raw) => {
-    if (!raw) return "assets/images/placeholder.svg";
+    const normalized = normalizeGoogleDriveUrl(raw);
+    if (!normalized) return "assets/images/placeholder.svg";
     try {
-      const url = new URL(raw, document.baseURI);
+      const url = new URL(normalized, document.baseURI);
       if (
         url.protocol === "https:" ||
         (url.origin === location.origin &&
@@ -52,8 +67,8 @@
     crypto.randomUUID
       ? crypto.randomUUID()
       : [...crypto.getRandomValues(new Uint8Array(16))]
-          .map((v) => v.toString(16).padStart(2, "0"))
-          .join("");
+        .map((v) => v.toString(16).padStart(2, "0"))
+        .join("");
   const links = {
     phone: `tel:${cfg.phoneRaw}`,
     email: `mailto:${cfg.email}`,
@@ -222,15 +237,14 @@
       ["Colour", c.color || "Ask us"],
       ["Status", c.status],
     ];
-    root.innerHTML = `<div class="detail-heading"><div><p class="eyebrow blue">${esc(c.make)} · REF ${esc(c.id)}</p><h1>${esc(c.model)}</h1><p>${esc(c.year)} · ${esc(c.specs || "Specifications on request")} · ${esc(c.status)}</p></div><p class="price">${money(c.price)}</p></div><div class="detail-layout"><div><div class="gallery-main"><img id="gallery-image" src="${esc(safeImage(images[0]))}" alt="${esc(title(c))}" width="1000" height="700"></div><div class="gallery-thumbs" aria-label="Vehicle photos">${images.map((img, i) => `<button type="button" data-photo="${i}" aria-label="Show photo ${i + 1}" aria-pressed="${i === 0}"><img src="${esc(safeImage(img))}" alt="" loading="lazy"></button>`).join("")}</div></div><aside class="detail-summary"><h3>At a glance</h3><dl class="specs">${vals.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl><a class="button primary" target="_blank" rel="noopener" href="${esc(wa(`Hello Al Zaad Cars, I’m asking about ${title(c)} (ref ${c.id}). Please confirm its availability and details.`))}">Ask on WhatsApp <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M6 18L18 6M6 6h12v12"/></svg></a>${c.status === "Available" ? '<a class="button bordered" href="#enquire">Arrange a viewing <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M6 18L18 6M6 6h12v12"/></svg></a>' : ""}<p class="field-help">${cfg.demoMode ? "Demo listing only. Not confirmed showroom stock." : "Availability, specifications, condition and the final price must be confirmed with the showroom. No online payment is taken."}</p></aside></div><div class="car-description"><h2>About this car</h2><p>${esc(c.description || "Contact our team for more details about this vehicle.")}</p>${
-      c.features
+    root.innerHTML = `<div class="detail-heading"><div><p class="eyebrow blue">${esc(c.make)} · REF ${esc(c.id)}</p><h1>${esc(c.model)}</h1><p>${esc(c.year)} · ${esc(c.specs || "Specifications on request")} · ${esc(c.status)}</p></div><p class="price">${money(c.price)}</p></div><div class="detail-layout"><div><div class="gallery-main"><img id="gallery-image" src="${esc(safeImage(images[0]))}" alt="${esc(title(c))}" width="1000" height="700"></div><div class="gallery-thumbs" aria-label="Vehicle photos">${images.map((img, i) => `<button type="button" data-photo="${i}" aria-label="Show photo ${i + 1}" aria-pressed="${i === 0}"><img src="${esc(safeImage(img))}" alt="" loading="lazy"></button>`).join("")}</div></div><aside class="detail-summary"><h3>At a glance</h3><dl class="specs">${vals.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl><a class="button primary" target="_blank" rel="noopener" href="${esc(wa(`Hello Al Zaad Cars, I’m asking about ${title(c)} (ref ${c.id}). Please confirm its availability and details.`))}">Ask on WhatsApp <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M6 18L18 6M6 6h12v12"/></svg></a>${c.status === "Available" ? '<a class="button bordered" href="#enquire">Arrange a viewing <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M6 18L18 6M6 6h12v12"/></svg></a>' : ""}<p class="field-help">${cfg.demoMode ? "Demo listing only. Not confirmed showroom stock." : "Availability, specifications, condition and the final price must be confirmed with the showroom. No online payment is taken."}</p></aside></div><div class="car-description"><h2>About this car</h2><p>${esc(c.description || "Contact our team for more details about this vehicle.")}</p>${c.features
         ? `<h2>Features</h2><ul class="features">${String(c.features)
-            .split("|")
-            .filter(Boolean)
-            .map((f) => `<li>${esc(f)}</li>`)
-            .join("")}</ul>`
+          .split("|")
+          .filter(Boolean)
+          .map((f) => `<li>${esc(f)}</li>`)
+          .join("")}</ul>`
         : ""
-    }</div>`;
+      }</div>`;
     $$("[data-photo]", root).forEach((button) =>
       button.addEventListener("click", () => {
         $("#gallery-image").src = safeImage(
@@ -316,6 +330,29 @@
       document.head.appendChild(script);
     });
   }
+  const CACHE_KEY = "alzaad_inventory_cache_v2";
+  function getCachedCars() {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.cars) && parsed.cars.length > 0) {
+        return parsed;
+      }
+    } catch (_) { }
+    return null;
+  }
+  function setCachedCars(carsList) {
+    try {
+      localStorage.setItem(
+        CACHE_KEY,
+        JSON.stringify({
+          timestamp: Date.now(),
+          cars: carsList,
+        }),
+      );
+    } catch (_) { }
+  }
   async function loadCars() {
     if (busy) return;
     busy = true;
@@ -325,47 +362,111 @@
         notice(
           "Preview catalogue · Sample listings and representative photos. These are not confirmed Al Zaad stock.",
         );
+        if (!loaded) {
+          syncForm();
+          loaded = true;
+        }
+        renderAll();
       } else {
         if (!apiConfigured) throw new Error("Not configured");
-        cars = (await loadJSONP()).filter(
-          (c) =>
-            c &&
-            c.id &&
-            c.make &&
-            c.model &&
-            ["Available", "Reserved", "Sold"].includes(c.status),
-        );
-        notice("");
+
+        // 1. FAST PATH: Instant display from localStorage cache (<10ms)
+        const cached = getCachedCars();
+        if (cached && cached.cars && cached.cars.length > 0) {
+          cars = cached.cars;
+          if (!loaded) {
+            syncForm();
+            loaded = true;
+          }
+          renderAll();
+          notice("");
+        }
+
+        // 2. BACKGROUND REVALIDATION: Fetch fresh data from Apps Script
+        try {
+          const freshCars = (await loadJSONP()).filter(
+            (c) =>
+              c &&
+              c.id &&
+              c.make &&
+              c.model &&
+              ["Available", "Reserved", "Sold"].includes(c.status),
+          );
+
+          const changed =
+            !cached ||
+            JSON.stringify(freshCars) !== JSON.stringify(cached.cars);
+
+          if (changed && freshCars.length > 0) {
+            cars = freshCars;
+            setCachedCars(cars);
+            if (!loaded) {
+              syncForm();
+              loaded = true;
+            }
+            renderAll();
+          }
+          notice("");
+        } catch (fetchErr) {
+          // If network failed but we had cached cars, keep showing them!
+          if (!cars || cars.length === 0) {
+            throw fetchErr;
+          }
+        }
       }
-      if (!loaded) {
-        syncForm();
-        loaded = true;
-      }
-      renderAll();
     } catch (_) {
-      // Never silently show demo or previously cached stock after a live failure.
-      cars = [];
-      renderAll();
-      notice(
-        "The live collection is temporarily unavailable. Please call or WhatsApp us to confirm stock.",
-      );
-      if ($("#result-count"))
-        $("#result-count").textContent = "Inventory unavailable";
-      const root = $("#all-cars") || $("#featured-cars") || $("#car-detail");
-      if (root)
-        root.innerHTML =
-          '<div class="empty"><h2>Let’s check for you.</h2><p>We couldn’t load the latest inventory.</p><button type="button" id="retry-inventory" class="button primary">Try again</button></div>';
-      $("#retry-inventory")?.addEventListener("click", loadCars);
+      if (!cars || cars.length === 0) {
+        cars = [];
+        renderAll();
+        notice(
+          "The live collection is temporarily unavailable. Please call or WhatsApp us to confirm stock.",
+        );
+        if ($("#result-count"))
+          $("#result-count").textContent = "Inventory unavailable";
+        const root = $("#all-cars") || $("#featured-cars") || $("#car-detail");
+        if (root)
+          root.innerHTML =
+            '<div class="empty"><h2>Let’s check for you.</h2><p>We couldn’t load the latest inventory.</p><button type="button" id="retry-inventory" class="button primary">Try again</button></div>';
+        $("#retry-inventory")?.addEventListener("click", loadCars);
+      }
     } finally {
       busy = false;
     }
   }
   if (filters) {
-    filters.elements.make.addEventListener("change", () => {
-      filters.elements.model.value = "";
-      populateFilters();
-    });
+    if (filters.elements.make) {
+      filters.elements.make.addEventListener("change", () => {
+        if (filters.elements.model) filters.elements.model.value = "";
+        populateFilters();
+      });
+    }
+    const moreBtn = $("#more-filters-btn");
+    const morePanel = $("#more-filters-panel");
+    if (moreBtn && morePanel) {
+      moreBtn.addEventListener("click", () => {
+        const expanded = moreBtn.getAttribute("aria-expanded") === "true";
+        moreBtn.setAttribute("aria-expanded", String(!expanded));
+        morePanel.hidden = expanded;
+      });
+    }
     if ($("#all-cars")) {
+      filters.addEventListener("change", (e) => {
+        if (e.target.name === "make") {
+          if (filters.elements.model) filters.elements.model.value = "";
+          populateFilters();
+        }
+        activeFilters = Object.fromEntries(new FormData(filters));
+        visibleCount = 9;
+        const query = new URLSearchParams(
+          Object.entries(activeFilters).filter(([, v]) => v),
+        );
+        history.replaceState(
+          null,
+          "",
+          `${location.pathname}${query.size ? "?" + query : ""}`,
+        );
+        renderResults();
+      });
       filters.addEventListener("submit", (e) => {
         e.preventDefault();
         activeFilters = Object.fromEntries(new FormData(filters));
@@ -389,108 +490,115 @@
           renderResults();
         }, 0);
       });
-      $("#sort").addEventListener("change", renderResults);
-      $("#load-more").addEventListener("click", () => {
-        visibleCount += 9;
-        renderResults();
+        $("#sort")?.addEventListener("change", renderResults);
+        $("#load-more")?.addEventListener("click", () => {
+          visibleCount += 9;
+          renderResults();
+        });
+      }
+  }
+    function toggleVehicle(form) {
+      const enabled = ["Sell", "Trade"].includes(form.elements.type.value);
+      $(".vehicle-fields", form).hidden = !enabled;
+      $$("input", $(".vehicle-fields", form)).forEach((input) => {
+        input.disabled = !enabled;
+        input.required =
+          enabled &&
+          [
+            "vehicleMake",
+            "vehicleModel",
+            "vehicleYear",
+            "vehicleMileage",
+          ].includes(input.name);
       });
     }
-  }
-  function toggleVehicle(form) {
-    const enabled = ["Sell", "Trade"].includes(form.elements.type.value);
-    $(".vehicle-fields", form).hidden = !enabled;
-    $$("input", $(".vehicle-fields", form)).forEach((input) => {
-      input.disabled = !enabled;
-      input.required =
-        enabled &&
-        [
-          "vehicleMake",
-          "vehicleModel",
-          "vehicleYear",
-          "vehicleMileage",
-        ].includes(input.name);
-    });
-  }
-  function resetRequest(form) {
-    form.elements.requestId.value = uid();
-    form.elements.startedAt.value = String(Date.now());
-  }
-  $$("[data-enquiry]").forEach((form) => {
-    resetRequest(form);
-    toggleVehicle(form);
-    form.elements.type.addEventListener("change", () => toggleVehicle(form));
-    form.addEventListener("input", () => {
+    function resetRequest(form) {
       form.elements.requestId.value = uid();
-    });
-    if (!cfg.demoMode && apiConfigured) {
-      form.action = cfg.apiUrl;
-      $("button[type=submit]", form).disabled = false;
-      $(".form-note", form).textContent = "";
+      form.elements.startedAt.value = String(Date.now());
     }
-    form.addEventListener("submit", (e) => {
-      if (cfg.demoMode || !apiConfigured) {
-        e.preventDefault();
-        return;
-      }
-      if (
-        cfg.turnstileSiteKey &&
-        !new FormData(form).get("cf-turnstile-response")
-      ) {
-        e.preventDefault();
-        $(".form-status", form).textContent =
-          "Please complete the anti-spam check.";
-        return;
-      }
-      $(".form-status", form).textContent =
-        "The confirmation opens in a new tab. Check that receipt to confirm whether your enquiry was saved.";
-      // Native HTTPS form POST: the Google receipt is authoritative; no opaque fetch success claims.
-      setTimeout(() => {
-        if (window.turnstile && form.dataset.widget)
-          window.turnstile.reset(form.dataset.widget);
-      }, 1500);
-    });
-  });
-  function setIntentFromHash() {
-    if (document.body.dataset.page !== "services") return;
-    const form = $("[data-enquiry]");
-    if (["#sell", "#trade"].includes(location.hash)) {
-      form.elements.type.value = location.hash === "#trade" ? "Trade" : "Sell";
+    $$("[data-enquiry]").forEach((form) => {
+      resetRequest(form);
       toggleVehicle(form);
-    }
-  }
-  setIntentFromHash();
-  window.addEventListener("hashchange", setIntentFromHash);
-  if (cfg.turnstileSiteKey && !cfg.demoMode && apiConfigured) {
-    window.alzaadTurnstileReady = () => {
-      $$("[data-enquiry]").forEach((form) => {
-        form.dataset.widget = window.turnstile.render(
-          $(".captcha-slot", form),
-          { sitekey: cfg.turnstileSiteKey, theme: "light" },
-        );
+      form.elements.type.addEventListener("change", () => toggleVehicle(form));
+      form.addEventListener("input", () => {
+        form.elements.requestId.value = uid();
       });
-    };
-    const script = document.createElement("script");
-    script.src =
-      "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=alzaadTurnstileReady&render=explicit";
-    script.async = true;
-    script.defer = true;
-    document.head.appendChild(script);
-  }
-  const needsInventory = Boolean(
-    $("#all-cars") ||
-    $("#featured-cars") ||
-    $("#car-detail") ||
-    $("[data-vehicle-select]"),
-  );
-  if (needsInventory) {
-    loadCars();
-    if (!cfg.demoMode) {
-      setInterval(
-        () => {
-          if (document.visibilityState === "visible") loadCars();
-        },
-        Math.max(60, cfg.refreshSeconds) * 1000,
-      );
+      if (!cfg.demoMode && apiConfigured) {
+        form.action = cfg.apiUrl;
+        $("button[type=submit]", form).disabled = false;
+        $(".form-note", form).textContent = "";
+      }
+      form.addEventListener("submit", (e) => {
+        if (cfg.demoMode || !apiConfigured) {
+          e.preventDefault();
+          return;
+        }
+        if (
+          cfg.turnstileSiteKey &&
+          !new FormData(form).get("cf-turnstile-response")
+        ) {
+          e.preventDefault();
+          $(".form-status", form).textContent =
+            "Please complete the anti-spam check.";
+          return;
+        }
+        $(".form-status", form).textContent =
+          "The confirmation opens in a new tab. Check that receipt to confirm whether your enquiry was saved.";
+        // Native HTTPS form POST: the Google receipt is authoritative; no opaque fetch success claims.
+        setTimeout(() => {
+          if (window.turnstile && form.dataset.widget)
+            window.turnstile.reset(form.dataset.widget);
+        }, 1500);
+      });
+    });
+    function setIntentFromHash() {
+      if (document.body.dataset.page !== "services") return;
+      const form = $("[data-enquiry]");
+      if (["#sell", "#trade"].includes(location.hash)) {
+        form.elements.type.value = location.hash === "#trade" ? "Trade" : "Sell";
+        toggleVehicle(form);
+      }
     }
-  }
-})();
+    setIntentFromHash();
+    window.addEventListener("hashchange", setIntentFromHash);
+    if (cfg.turnstileSiteKey && !cfg.demoMode && apiConfigured) {
+      window.alzaadTurnstileReady = () => {
+        $$("[data-enquiry]").forEach((form) => {
+          form.dataset.widget = window.turnstile.render(
+            $(".captcha-slot", form),
+            { sitekey: cfg.turnstileSiteKey, theme: "light" },
+          );
+        });
+      };
+      const script = document.createElement("script");
+      script.src =
+        "https://challenges.cloudflare.com/turnstile/v0/api.js?onload=alzaadTurnstileReady&render=explicit";
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+    const needsInventory = Boolean(
+      $("#all-cars") ||
+      $("#featured-cars") ||
+      $("#car-detail") ||
+      $("[data-vehicle-select]"),
+    );
+    if (needsInventory) {
+      loadCars();
+      if (!cfg.demoMode) {
+        setInterval(
+          () => {
+            if (document.visibilityState === "visible") loadCars();
+          },
+          Math.max(60, cfg.refreshSeconds) * 1000,
+        );
+      }
+    } else if (!cfg.demoMode && apiConfigured && !getCachedCars()) {
+      // Warm cache in background so clicking "All cars" opens instantly
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(() => loadCars(), { timeout: 3000 });
+      } else {
+        setTimeout(loadCars, 2000);
+      }
+    }
+  }) ();
