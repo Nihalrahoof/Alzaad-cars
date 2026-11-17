@@ -48,6 +48,7 @@
     </section>
         <div class="wrap search-wrap">
           <form id="filters" class="quick-search cars-top-filter" action="cars.html" method="get">
+            <label>Brand<select name="make" data-options="make">
                 <option value="">All brands</option>
               </select></label><label>Model<select name="model" data-options="model">
                 <option value="">All models</option>
@@ -59,8 +60,6 @@
                 <option value="150000">Under AED 150,000</option>
                 <option value="250000">Under AED 250,000</option>
                 <option value="400000">Under AED 400,000</option>
-              </select></label><label>Body type<select name="body" data-options="body">
-                <option value="">All types</option>
               </select></label><label>Specification<select name="specs" data-options="specs">
                 <option value="">All specs</option>
               </select></label>
@@ -94,7 +93,9 @@
                 </div>
               </div>
               <div id="more-filters-panel" class="more-filters-panel" hidden>
-                <label>Transmission<select name="transmission" data-options="transmission">
+                <label>Body type<select name="body" data-options="body">
+                    <option value="">All types</option>
+                  </select></label><label>Transmission<select name="transmission" data-options="transmission">
                     <option value="">All transmissions</option>
                   </select></label><label>Fuel<select name="fuel" data-options="fuel">
                     <option value="">All fuels</option>
