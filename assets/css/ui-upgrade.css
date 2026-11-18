@@ -343,12 +343,13 @@
   z-index: 2;
   box-sizing: border-box;
 }
+.service-card span.service-card-cta,
 .service-card .service-card-cta {
   display: inline-flex !important;
   align-items: center !important;
   gap: 10px !important;
   background: #000000 !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.55) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.5) !important;
   color: #ffffff !important;
   padding: 11px 24px !important;
   border-radius: 999px !important;
@@ -359,6 +360,7 @@
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
   box-shadow: 0 6px 22px rgba(0, 0, 0, 0.6) !important;
 }
+.service-card span.service-card-cta .arrow-icon,
 .service-card .service-card-cta .arrow-icon {
   stroke: #ffffff !important;
   transition: transform 0.25s ease !important;
