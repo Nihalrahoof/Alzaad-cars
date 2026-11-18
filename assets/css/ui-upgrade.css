@@ -1018,9 +1018,9 @@ html.viewer-is-open {
 
 /* Hero Action Buttons - High visibility and emphasis */
 .hero-actions {
-  margin-top: 32px;
+  margin-top: 36px;
   display: flex;
-  gap: 16px;
+  gap: 18px;
   flex-wrap: wrap;
   align-items: center;
 }
@@ -1029,11 +1029,11 @@ html.viewer-is-open {
   align-items: center;
   justify-content: center;
   gap: 14px;
-  min-height: 54px;
-  padding: 14px 34px;
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+  min-height: 58px;
+  padding: 16px 38px;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
   border-radius: 8px;
   text-decoration: none;
   cursor: pointer;
@@ -1068,6 +1068,8 @@ html.viewer-is-open {
   box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45), 0 0 25px rgba(255, 255, 255, 0.3);
 }
 .hero-btn .arrow-icon {
+  width: 18px;
+  height: 18px;
   transition: transform 0.25s ease;
 }
 .hero-btn:hover .arrow-icon {
@@ -1083,9 +1085,9 @@ html.viewer-is-open {
   .hero-btn {
     width: 100%;
     justify-content: center;
-    min-height: 50px;
-    padding: 13px 20px;
-    font-size: 14px;
+    min-height: 52px;
+    padding: 14px 24px;
+    font-size: 16px !important;
   }
 }
 

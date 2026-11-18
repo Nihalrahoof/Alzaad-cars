@@ -259,7 +259,7 @@
     if (c.status === "Available") {
       const form = $("[data-enquiry]");
       if (!form.dataset.vehicleSet) {
-        form.elements.carId.value = c.id;
+        if (form.elements.carId) form.elements.carId.value = c.id;
         form.elements.type.value = "Test drive";
         form.dataset.vehicleSet = "true";
         toggleVehicle(form);
@@ -509,6 +509,7 @@
             "vehicleModel",
             "vehicleYear",
             "vehicleMileage",
+            "expectedPrice",
           ].includes(input.name);
       });
     }

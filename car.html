@@ -38,7 +38,7 @@
           <a href="index.html" data-page="home">Home</a
           ><a href="cars.html" data-page="cars">All cars</a
           ><a href="buy-sell-trade.html" data-page="services"
-            >Buy / Sell / Trade</a
+            >Sell car</a
           ><a href="about-contact.html" data-page="contact">About / Contact</a>
         </nav>
         <a
@@ -135,14 +135,8 @@
                   pattern="[+0-9() .-]{7,25}"
               /></label>
             </div>
+            <input type="hidden" name="carId" />
             <label
-              >Email address <span>(optional)</span
-              ><input
-                name="email"
-                type="email"
-                maxlength="150"
-                autocomplete="email" /></label
-            ><label
               >I’d like to<select name="type">
                 <option selected value="General">Ask a question</option>
                 <option value="Buy">Buy a car</option>
@@ -151,11 +145,6 @@
                 <option value="Test drive">
                   Arrange a viewing / test drive
                 </option>
-              </select></label
-            ><label
-              >Vehicle of interest <span>(optional)</span
-              ><select name="carId" data-vehicle-select>
-                <option value="">Not decided yet</option>
               </select></label
             >
             <div class="vehicle-fields" hidden>
@@ -184,24 +173,13 @@
                 /></label>
               </div>
               <label
-                >Expected price (AED) <span>(optional)</span
-                ><input
+                >Expected price (AED) *<input
+                  required
                   name="expectedPrice"
                   type="number"
                   min="0"
                   max="100000000" /></label
-              ><label
-                >Photo album link <span>(optional)</span
-                ><input
-                  type="url"
-                  name="photoUrl"
-                  maxlength="1500"
-                  placeholder="https://…"
-              /></label>
-              <p class="field-help">
-                Share a photo album link, or send photos on WhatsApp. No
-                documents or vehicle registration cards are needed here.
-              </p>
+              >
             </div>
             <label
               >Your message<textarea
@@ -210,22 +188,11 @@
                 maxlength="2000"
                 placeholder="Tell us what you’re looking for…"
               ></textarea></label
-            ><label class="consent"
-              ><input
-                type="checkbox"
-                name="consent"
-                value="yes"
-                required
-              /><span
-                >I agree to be contacted about this enquiry and have read the
-                <a href="privacy.html" target="_blank" rel="noopener"
-                  >privacy notice</a
-                >. *</span
-              ></label
             >
+            <input type="hidden" name="consent" value="yes" />
             <div class="captcha-slot"></div>
             <button type="submit" class="button primary" disabled>
-              Send enquiry
+              Submit
               <span
                 ><svg
                   class="arrow-icon"
