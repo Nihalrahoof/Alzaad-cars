@@ -291,11 +291,17 @@
   box-shadow: var(--soft-shadow);
   display: flex !important;
   flex-direction: column !important;
-  align-items: flex-start !important;
-  justify-content: flex-start !important;
+  align-items: stretch !important;
+  justify-content: space-between !important;
+  position: relative !important;
+  overflow: hidden !important;
 }
 .service-card::after {
-  background: linear-gradient(180deg, rgba(7, 14, 30, 0.92) 0%, rgba(7, 14, 30, 0.55) 38%, rgba(7, 14, 30, 0.08) 72%, transparent 100%) !important;
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(180deg, rgba(7, 14, 30, 0.88) 0%, rgba(7, 14, 30, 0.42) 28%, rgba(7, 14, 30, 0.06) 50%, rgba(7, 14, 30, 0.38) 75%, rgba(7, 14, 30, 0.90) 100%) !important;
+  z-index: 1 !important;
 }
 .service-card img {
   object-fit: cover;
@@ -314,8 +320,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 16px;
-  padding: 34px 28px !important;
+  padding: 34px 28px 16px !important;
   width: 100%;
   z-index: 2;
   box-sizing: border-box;
@@ -327,39 +332,47 @@
   color: #ffffff;
   margin: 0;
   letter-spacing: -0.01em;
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
 }
-.service-card-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.20);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  color: #ffffff;
-  padding: 8px 18px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+.service-card .service-card-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  padding: 16px 28px 34px !important;
+  width: 100%;
+  z-index: 2;
+  box-sizing: border-box;
 }
-.service-card-cta .arrow-icon {
-  stroke: #ffffff;
-  transition: transform 0.25s ease;
+.service-card .service-card-cta {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: #000000 !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.55) !important;
+  color: #ffffff !important;
+  padding: 11px 24px !important;
+  border-radius: 999px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+  text-decoration: none !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.6) !important;
+}
+.service-card .service-card-cta .arrow-icon {
+  stroke: #ffffff !important;
+  transition: transform 0.25s ease !important;
 }
 .service-card:hover .service-card-cta {
-  background: #ffffff;
-  color: var(--navy);
-  border-color: #ffffff;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38);
+  background: #1149b0 !important;
+  color: #ffffff !important;
+  border-color: #1149b0 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 28px rgba(17, 73, 176, 0.55) !important;
 }
 .service-card:hover .service-card-cta .arrow-icon {
-  stroke: var(--navy);
-  transform: translate(2px, -2px);
+  stroke: #ffffff !important;
+  transform: translate(2px, -2px) !important;
 }
 .visit-panel {
   position: relative;
@@ -1151,7 +1164,7 @@ html.viewer-is-open {
 }
 .visit h2 {
   font-size: clamp(32px, 4.5vw, 46px) !important;
-  margin: 14px 0 16px !important;
+  margin: 14px 0 28px !important;
   line-height: 1.2 !important;
 }
 .visit p {
@@ -1379,16 +1392,45 @@ html.viewer-is-open {
   filter: brightness(1.06) !important;
   color: #ffffff !important;
 }
+@media (max-width: 768px) {
+  .chat-float {
+    width: 54px !important;
+    height: 54px !important;
+    bottom: 84px !important;
+    right: 18px !important;
+  }
+  .chat-float .whatsapp-icon {
+    width: 30px !important;
+    height: 30px !important;
+  }
+  .back-top {
+    bottom: 150px !important;
+    right: 22px !important;
+  }
+}
 @media (max-width: 520px) {
   .chat-float {
     width: 52px !important;
     height: 52px !important;
-    bottom: 18px !important;
-    right: 18px !important;
+    bottom: 80px !important;
+    right: 16px !important;
   }
   .chat-float .whatsapp-icon {
-    width: 28px !important;
-    height: 28px !important;
+    width: 29px !important;
+    height: 29px !important;
+  }
+  .back-top {
+    bottom: 144px !important;
+    right: 20px !important;
+  }
+  .service-card {
+    min-height: 420px !important;
+  }
+  .service-card .service-card-top {
+    padding: 26px 20px 12px !important;
+  }
+  .service-card .service-card-bottom {
+    padding: 12px 20px 26px !important;
   }
 }
 
