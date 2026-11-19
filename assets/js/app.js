@@ -1,6 +1,36 @@
 /* Al Zaad Cars — framework-free, static-host compatible. */
 (() => {
   "use strict";
+
+  // Clean URL normalizer: automatically removes .html extension from browser address bar
+  if (typeof window !== "undefined" && window.location.protocol.startsWith("http") && window.location.pathname.endsWith(".html")) {
+    const cleanPath = window.location.pathname
+      .replace(/\/index\.html$/, "/")
+      .replace(/\.html$/, "");
+    window.history.replaceState(null, "", cleanPath + window.location.search + window.location.hash);
+  }
+
+  // Local development helper: on Live Server / localhost without server-side rewrite rules,
+  // intercept clean link clicks so navigating to "cars" or "sell" loads "cars.html" or "sell.html" seamlessly
+  if (typeof window !== "undefined" && (window.location.hostname === "127.0.0.1" || window.location.hostname === "localhost")) {
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a");
+      if (!a || !a.href || a.target === "_blank" || a.hasAttribute("download")) return;
+      const href = a.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("mailto:") || href.startsWith("tel:") || href.startsWith("javascript:")) return;
+      try {
+        const url = new URL(a.href, window.location.href);
+        if (url.origin === window.location.origin) {
+          const path = url.pathname;
+          if (!path.includes(".") && !path.endsWith("/")) {
+            e.preventDefault();
+            window.location.href = path + ".html" + url.search + url.hash;
+          }
+        }
+      } catch {}
+    });
+  }
+
   const cfg = window.ALZAAD;
   const $ = (s, root = document) => root.querySelector(s);
   const $$ = (s, root = document) => [...root.querySelectorAll(s)];
@@ -22,7 +52,7 @@
   const title = (c) => `${c.year} ${c.make} ${c.model}`;
   const wa = (message) =>
     `https://wa.me/${cfg.whatsapp}?text=${encodeURIComponent(message || "Hello Al Zaad Cars, I would like to know more about your available cars.")}`;
-  const carLink = (c) => `car.html?id=${encodeURIComponent(c.id)}`;
+  const carLink = (c) => `car?id=${encodeURIComponent(c.id)}`;
   const normalizeGoogleDriveUrl = (raw) => {
     if (!raw || typeof raw !== "string") return "";
     const trimmed = raw.trim();
@@ -206,7 +236,7 @@
       `${list.length} ${list.length === 1 ? "vehicle" : "vehicles"} in the collection`;
     $("#all-cars").innerHTML = list.length
       ? list.slice(0, visibleCount).map(card).join("")
-      : '<div class="empty"><h2>No matching cars.</h2><p>Try another filter, or tell us what you’re looking for.</p><a class="button primary" href="about-contact.html#contact">Speak with our team <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M6 18L18 6M6 6h12v12"/></svg></a></div>';
+      : '<div class="empty"><h2>No matching cars.</h2><p>Try another filter, or tell us what you’re looking for.</p><a class="button primary" href="about-contact#contact">Speak with our team <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M6 18L18 6M6 6h12v12"/></svg></a></div>';
     $("#load-more").hidden = list.length <= visibleCount;
   }
   function renderDetail() {
@@ -216,7 +246,7 @@
     const c = cars.find((c) => c.id === id);
     if (!c) {
       root.innerHTML =
-        '<div class="empty"><h1>Vehicle unavailable.</h1><p>This listing may have been removed. Please browse the current collection.</p><a class="button primary" href="cars.html">View cars <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M6 18L18 6M6 6h12v12"/></svg></a></div>';
+        '<div class="empty"><h1>Vehicle unavailable.</h1><p>This listing may have been removed. Please browse the current collection.</p><a class="button primary" href="cars">View cars <svg class="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false"><path d="M6 18L18 6M6 6h12v12"/></svg></a></div>';
       $("#enquire").hidden = true;
       return;
     }
@@ -286,7 +316,7 @@
         .sort()
         .map(
           (make) =>
-            `<a href="cars.html?make=${encodeURIComponent(make)}">${esc(make)}<small>${cars.filter((c) => c.make === make).length} listed</small></a>`,
+            `<a href="cars?make=${encodeURIComponent(make)}">${esc(make)}<small>${cars.filter((c) => c.make === make).length} listed</small></a>`,
         )
         .join("");
     populateFilters();
