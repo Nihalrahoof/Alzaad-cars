@@ -507,19 +507,68 @@ button:disabled {
   position: absolute;
   top: 14px;
   left: 14px;
-  background: #ffffffed;
-  padding: 4px 9px;
-  font-size: 10px;
-  letter-spacing: 0.04em;
-  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(4px);
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 4px;
   color: var(--ink);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 2;
 }
 
+/* Prominent Status Badge on Image (Top-Right) */
 .badge.status {
   right: 14px;
   left: auto;
-  background: var(--navy);
-  color: #fff;
+  top: 14px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  z-index: 3;
+  line-height: 1;
+}
+
+.badge.status .status-dot,
+.badge.status::before {
+  content: "";
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 6px #ffffff;
+  flex-shrink: 0;
+}
+
+/* Reserved Status Badge */
+.badge.status.status-reserved,
+.badge.status:not([class*="status-sold"]) {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+/* Sold Status Badge */
+.badge.status.status-sold {
+  background: linear-gradient(135deg, #dc2626, #991b1b);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+.car-card.is-reserved .car-image img,
+.car-card.is-sold .car-image img {
+  filter: brightness(0.92);
 }
 
 .car-info {
@@ -566,9 +615,41 @@ button:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   border-top: 1px solid var(--line);
   padding-top: 17px;
+}
+
+.price-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 4px 9px;
+  border-radius: 3px;
+  line-height: 1;
+}
+
+.status-pill.status-reserved,
+.status-pill:not([class*="status-sold"]) {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.status-pill.status-sold {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
 }
 
 .price {
@@ -1078,11 +1159,55 @@ label>span {
   gap: 45px;
 }
 
+.title-with-status {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.title-with-status h1 {
+  margin: 10px 0;
+}
+
+.status-notice {
+  padding: 14px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.status-notice p {
+  margin: 0;
+}
+
+.status-notice.reserved {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+
+.status-notice.sold {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+}
+
 .gallery-main {
+  position: relative;
   background: var(--ice);
   aspect-ratio: 1.45;
   border-radius: 4px;
   overflow: hidden;
+}
+
+.gallery-main .badge.status {
+  top: 18px;
+  right: 18px;
+  padding: 8px 18px;
+  font-size: 13px;
+  letter-spacing: 0.1em;
 }
 
 .gallery-main img {
