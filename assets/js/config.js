@@ -7,7 +7,7 @@ window.ALZAAD = Object.freeze({
   phone: "+971 50 792 4012",
   phoneRaw: "+971507924012",
   whatsapp: "971507924012", // Assumes the supplied call number also has WhatsApp. Verify before launch.
-  email: "alafdhalgroupuae@gmail.com",
+  email: "sales@alzaadcars.com",
   maps: "https://maps.app.goo.gl/UCCkHAHCBX9JuDrG9",
   instagram: "https://www.instagram.com/alzaadcars.ae",
   facebook: "https://www.facebook.com/share/19id28i2YX/",
